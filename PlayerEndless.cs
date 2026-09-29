@@ -3,35 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerEndless : MonoBehaviour
 {
-    
+
 
     [Header("References")]
     GameManager gm;
+    ObjectManager om;
     public SpriteRenderer Renderer;
     public Animator Animador;
     public Rigidbody2D rigidBody;
 
+    public CircleCollider2D colider;
+
     [Header("Numbers")]
     private int Jumps = 2;
     public int Coin = 0;
-    
-    Vector3 InitialPosition;    
-    
+
+    Vector3 InitialPosition;
+
 
     [Header("Booleans")]
-    private bool Victoria;
-    private bool CanJump;
     private bool CanMove;
 
     [Header("UI")]
     public TextMeshProUGUI pointsUI;
-    
+
 
 
     [Header("Audio")]
@@ -45,11 +47,9 @@ public class PlayerEndless : MonoBehaviour
     public Material material;
 
 
-
-    
-
     private void Start()
     {
+        om = FindObjectOfType<ObjectManager>();
         gm = GameManager.Instance;
 
         Jumps = 0;
@@ -57,8 +57,8 @@ public class PlayerEndless : MonoBehaviour
 
         InitialPosition = transform.position;
         gm.OnStart.AddListener(RevivePlayer);
-        
 
+        ResetCoins();
     }
     //Reactivates the player on game over
     private void RevivePlayer()
@@ -76,8 +76,8 @@ public class PlayerEndless : MonoBehaviour
             Movement();
             CanMove = true;
         }
-        
-        //Blocks the rotation of the sprite with the game paused
+
+        //Block the rotation of the sprite with the game paused
         if (CanMove == false)
             Animador.SetBool("Is Running", true);
 
@@ -88,10 +88,10 @@ public class PlayerEndless : MonoBehaviour
         else
             Animador.SetBool("Is Running", true);
 
-        
-        
-       
-        
+
+
+
+
     }
     public void Movement()
     {
@@ -127,15 +127,26 @@ public class PlayerEndless : MonoBehaviour
             pointsUI.text = "Coins: " + Coin;
         }
         //Detects if the player falls on the killzone
-        if(collision.gameObject.GetComponent<Killzone>())
+        if (collision.gameObject.GetComponent<Killzone>())
         {
             gameObject.SetActive(false);
             gm.Gameover();
             transform.position = InitialPosition;
-            
+
+
         }
+        if (collision.gameObject.GetComponent<PickableObject>())
+        {
+            om.milk();
+        }
+
+
+
+
     }
-    
+
+
+
     //Detects if the player Can jump again 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -158,6 +169,9 @@ public class PlayerEndless : MonoBehaviour
 
     public void ResetCoins()
     {
+        pointsUI.text = "Coins: " + 0;
         Coin = 0;
     }
+
+    
 }

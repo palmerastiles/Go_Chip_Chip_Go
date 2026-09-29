@@ -23,11 +23,13 @@ public class GameManager : MonoBehaviour
     public UnityEvent OnGameover = new UnityEvent();
     public UnityEvent OnStart = new UnityEvent();
 
+    public float Milktimr = 5;
 
     public bool IsPlaying = false;
 
     private void Start()
     {
+        Milktimr=5;
         string LoadedData = SaveSystem.Load("save");
 
         if(LoadedData != null)
@@ -69,6 +71,10 @@ public class GameManager : MonoBehaviour
     public string Coins()
     {
        return data.Coins.ToString();
+    }
+    public void PowerUpgrade()
+    {
+
     }
     public void Gameover()
     {

@@ -8,27 +8,32 @@ public class LevelGenerator : MonoBehaviour
     public Transform LevelStartPosition;
     public Transform Grid;
     public List<Transform> prefab;
-
+    public List<Transform> ItemPrefab;
     private List<Transform> generatedPlatforms = new List<Transform>();
 
     [Header("GameObjects")]
     public GameObject player;
     public CameraController cameraController;
     private GameManager gm;
+    public Transform ObjectManager;
+
     [Header("Numbers")]
     private const float PlayerDistance = 10f;
     private Vector3 lastEndposition;
+    private Vector3 ItemSpawner;
+    public int digit;
 
     private void Start()
     {
         gm = GameManager.Instance;
+        
     }
 
     
     private void Update()
     {
-        
-        
+
+
         
             //Spawns Platforms Relative to the player
             if (Vector3.Distance(
@@ -37,6 +42,7 @@ public class LevelGenerator : MonoBehaviour
             {
             
                 SpawnlevelPart();
+                digit = Random.Range(0, 101);
             }
     }
 
@@ -44,9 +50,9 @@ public class LevelGenerator : MonoBehaviour
     private void Awake()
     {
         //Searches the end position of the last platform 
-        lastEndposition =
-            LevelStartPosition.Find("LevelpartEnd").position;
+        lastEndposition = LevelStartPosition.Find("LevelpartEnd").position;
 
+        
         SpawnlevelPart();
         //Spawns some platforms for the start of the game
         int StartingParts = 5;
@@ -78,11 +84,27 @@ public class LevelGenerator : MonoBehaviour
         lastEndposition =
             LastLevelPart.Find("LevelpartEnd").position;
 
-           generatedPlatforms.Add(LastLevelPart);
+        // ItemSpawner = LastLevelPart.Find("ItemSpawner").position;
+
+        generatedPlatforms.Add(LastLevelPart);
         //Calls the camera for the last part spawned
         cameraController.OffScreenArrow(
             LastLevelPart
         );
+
+        print(ItemSpawner);
+        if(digit <= 30)
+        {
+           print("Coin");
+           
+            Instantiate(
+                ItemPrefab[1],new Vector3(ItemSpawner.x,ItemSpawner.y,ItemSpawner.z),Quaternion.identity);
+        }
+        else if(digit>=31)
+        {
+            print("milk");
+            Instantiate(ItemPrefab[0],new Vector3(ItemSpawner.x,ItemSpawner.y,ItemSpawner.z),Quaternion.identity);
+        }
     }
 
     //Spawns the platforms on the grid

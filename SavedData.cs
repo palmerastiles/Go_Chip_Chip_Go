@@ -12,5 +12,13 @@ public class SavedData
     public float HighScore;
     public int Coins;
 
-    
+    public int MilkTimers;
+
+    public int MilkUpGrd;
+    public int BubbleUpGrd;
+    public int PillUpGrd;
+    public int ArmrUpGrd;
+
+
+
 }
