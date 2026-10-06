@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -20,6 +21,7 @@ public class LevelGenerator : MonoBehaviour
     [Header("Numbers")]
     private const float PlayerDistance = 10f;
     private Vector3 lastEndposition;
+    private Transform ItemSpawnerPosition;
     private Vector3 ItemSpawner;
     public int digit;
 
@@ -40,9 +42,10 @@ public class LevelGenerator : MonoBehaviour
                 player.transform.position,
                 lastEndposition) < PlayerDistance)
             {
-            
-                SpawnlevelPart();
                 digit = Random.Range(0, 101);
+                SpawnlevelPart();
+            print(digit);
+                
             }
     }
 
@@ -69,8 +72,9 @@ public class LevelGenerator : MonoBehaviour
     private void SpawnlevelPart()
     {
         //Selects a random platform
-        Transform ChosenPrefab =
-            prefab[Random.Range(0, prefab.Count)];
+        Transform ChosenPrefab =prefab[Random.Range(0, prefab.Count)];
+
+       Transform ChosenPowerUp = ItemPrefab[Random.Range(1, ItemPrefab.Count)];
 
         //Spawns the next platform on the end point of the last platform
         Transform LastLevelPart =
@@ -79,12 +83,23 @@ public class LevelGenerator : MonoBehaviour
                 lastEndposition
             );
 
-        
+        Transform ItemSpawnerPosition = LastLevelPart.Find("ItemSpawner");
+        if (ItemSpawnerPosition == null)
+        {
+            Debug.LogError(
+                "No se encontró ItemSpawner dentro de: " +
+                LastLevelPart.name
+            );
+
+            return;
+        }
+        ItemSpawner = ItemSpawnerPosition.position;
+
+
+
         //finds the end position of each platform
         lastEndposition =
             LastLevelPart.Find("LevelpartEnd").position;
-
-        // ItemSpawner = LastLevelPart.Find("ItemSpawner").position;
 
         generatedPlatforms.Add(LastLevelPart);
         //Calls the camera for the last part spawned
@@ -92,18 +107,14 @@ public class LevelGenerator : MonoBehaviour
             LastLevelPart
         );
 
-        print(ItemSpawner);
-        if(digit <= 30)
-        {
-           print("Coin");
-           
-            Instantiate(
-                ItemPrefab[1],new Vector3(ItemSpawner.x,ItemSpawner.y,ItemSpawner.z),Quaternion.identity);
+       // print(ItemSpawner);
+        if(digit >= 6)
+        {  
+            Instantiate( ItemPrefab[0],ItemSpawner,Quaternion.identity);
         }
-        else if(digit>=31)
-        {
-            print("milk");
-            Instantiate(ItemPrefab[0],new Vector3(ItemSpawner.x,ItemSpawner.y,ItemSpawner.z),Quaternion.identity);
+        else if(digit<=5)
+        { 
+            Instantiate(ChosenPowerUp,ItemSpawner,Quaternion.identity);
         }
     }
 

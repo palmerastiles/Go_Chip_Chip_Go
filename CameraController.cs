@@ -7,14 +7,14 @@ public class CameraController : MonoBehaviour
 {
     [Header("GameObjects")]
     public GameObject MenuUI;
-    public Camera cam;
+    public Camera cam; 
     public GameObject player;
     public TextMeshProUGUI ScoreUI;
 
     GameManager gm;
 
     [Header("Floats")]
-    public float CameraSpeed = 0.3f;
+    public float CameraSpeed;
     private float TimeAlive;
     private float SpeedUp;
     public string Score;
@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour
 
     [Header("Materials")]
     public Material material;
+    public Material MaterialCloud;
     private Vignette vignette;
 
     [Header("Danger Effect")]
@@ -50,8 +51,8 @@ void Start()
     {
         //Paralax Background on Y
         material.SetFloat("_PlayerY", transform.position.y);
+        MaterialCloud.SetFloat("_PlayerY", transform.position.y);
 
-       
         //Moves the paralax background on X by following the player
         Vector3 Playerpos = player.transform.position;
         Vector3 pos = transform.position;

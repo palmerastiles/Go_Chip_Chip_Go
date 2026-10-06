@@ -14,7 +14,19 @@ public class Killzone : MonoBehaviour
         {
             Destroy(collision.gameObject);
         }
+        if (collision.CompareTag("Milk"))
+        {
+            Destroy(collision.gameObject);
+        }
+        if(collision.CompareTag("Pill"))
+        {
+            Destroy(collision.gameObject);
+        }
+        if (collision.CompareTag("Coin"))
+        {
+            Destroy(collision.gameObject);
+        }
 
-        
+
     }
 }

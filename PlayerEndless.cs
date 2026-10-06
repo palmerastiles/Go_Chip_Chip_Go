@@ -25,6 +25,8 @@ public class PlayerEndless : MonoBehaviour
     private int Jumps = 2;
     public int Coin = 0;
 
+    public int JumpForce = 10;
+
     Vector3 InitialPosition;
 
 
@@ -45,6 +47,7 @@ public class PlayerEndless : MonoBehaviour
 
     [Header("Materials")]
     public Material material;
+    public Material MaterialCloud;
 
 
     private void Start()
@@ -72,6 +75,7 @@ public class PlayerEndless : MonoBehaviour
         {
             //Moves The Background Relative to the player on X axis
             material.SetFloat("_PlayerX", transform.position.x);
+            MaterialCloud.SetFloat("_PlayerX", transform.position.x);
             //Apply movement
             Movement();
             CanMove = true;
@@ -111,7 +115,7 @@ public class PlayerEndless : MonoBehaviour
             Juming.Play();
             Animador.SetTrigger("Jump");
             rigidBody.velocity = Vector2.zero;
-            rigidBody.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+            rigidBody.AddForce(Vector2.up * JumpForce, ForceMode2D.Impulse);
             Jumps--;
 
         }
@@ -135,11 +139,14 @@ public class PlayerEndless : MonoBehaviour
 
 
         }
-        if (collision.gameObject.GetComponent<PickableObject>())
+        if (collision.gameObject.CompareTag("Milk"))
         {
             om.milk();
         }
-
+        if(collision.gameObject.CompareTag("Pill"))
+        {
+            om.Pill();
+        }
 
 
 
