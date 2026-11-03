@@ -14,6 +14,7 @@ public class PlayerEndless : MonoBehaviour
 
     [Header("References")]
     GameManager gm;
+    UIManager ui;
     ObjectManager om;
     public SpriteRenderer Renderer;
     public Animator Animador;
@@ -27,7 +28,7 @@ public class PlayerEndless : MonoBehaviour
 
     public int JumpForce = 10;
 
-    Vector3 InitialPosition;
+     public Vector3 InitialPosition;
 
 
     [Header("Booleans")]
@@ -52,6 +53,7 @@ public class PlayerEndless : MonoBehaviour
 
     private void Start()
     {
+        ui = FindObjectOfType<UIManager>();
         om = FindObjectOfType<ObjectManager>();
         gm = GameManager.Instance;
 
@@ -68,7 +70,7 @@ public class PlayerEndless : MonoBehaviour
     {
         gameObject.SetActive(true);
     }
-    void Update()
+    void LateUpdate()
     {
         //if not playing the player cant move 
         if (gm.IsPlaying)
@@ -92,7 +94,7 @@ public class PlayerEndless : MonoBehaviour
         else
             Animador.SetBool("Is Running", true);
 
-
+        PauseHandler();
 
 
 
@@ -142,10 +144,12 @@ public class PlayerEndless : MonoBehaviour
         if (collision.gameObject.CompareTag("Milk"))
         {
             om.milk();
+            Destroy(collision.gameObject);
         }
         if(collision.gameObject.CompareTag("Pill"))
         {
             om.Pill();
+            Destroy(collision.gameObject);
         }
 
 
@@ -179,6 +183,12 @@ public class PlayerEndless : MonoBehaviour
         pointsUI.text = "Coins: " + 0;
         Coin = 0;
     }
-
+    public void PauseHandler()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            ui.PauseButtonHandler();
+        }
+    }
     
 }

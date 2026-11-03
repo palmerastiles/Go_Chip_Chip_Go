@@ -11,6 +11,7 @@ public class LevelGenerator : MonoBehaviour
     public List<Transform> prefab;
     public List<Transform> ItemPrefab;
     private List<Transform> generatedPlatforms = new List<Transform>();
+    private List<Transform> generatedItems = new List<Transform>();
 
     [Header("GameObjects")]
     public GameObject player;
@@ -21,6 +22,7 @@ public class LevelGenerator : MonoBehaviour
     [Header("Numbers")]
     private const float PlayerDistance = 10f;
     private Vector3 lastEndposition;
+    private Vector3 LastSpawnerPosition;
     private Transform ItemSpawnerPosition;
     private Vector3 ItemSpawner;
     public int digit;
@@ -52,6 +54,7 @@ public class LevelGenerator : MonoBehaviour
     // Spawns some platforms for starting
     private void Awake()
     {
+        digit = Random.Range(0, 101);
         //Searches the end position of the last platform 
         lastEndposition = LevelStartPosition.Find("LevelpartEnd").position;
 
@@ -63,6 +66,7 @@ public class LevelGenerator : MonoBehaviour
         for (int i = 0; i < StartingParts; i++)
         {
             SpawnlevelPart();
+            print(digit);
         }
 
        
@@ -74,48 +78,52 @@ public class LevelGenerator : MonoBehaviour
         //Selects a random platform
         Transform ChosenPrefab =prefab[Random.Range(0, prefab.Count)];
 
-       Transform ChosenPowerUp = ItemPrefab[Random.Range(1, ItemPrefab.Count)];
+   
 
         //Spawns the next platform on the end point of the last platform
-        Transform LastLevelPart =
-            SpawnlevelPart(
-                ChosenPrefab,
-                lastEndposition
-            );
+        Transform LastLevelPart = SpawnlevelPart(ChosenPrefab,lastEndposition);
 
-        Transform ItemSpawnerPosition = LastLevelPart.Find("ItemSpawner");
-        if (ItemSpawnerPosition == null)
-        {
-            Debug.LogError(
-                "No se encontró ItemSpawner dentro de: " +
-                LastLevelPart.name
-            );
 
-            return;
-        }
+        
+
+        lastEndposition =LastLevelPart.Find("LevelpartEnd").position;
+
+        ItemSpawnerPosition = LastLevelPart.Find("ItemSpawner");
+
+
         ItemSpawner = ItemSpawnerPosition.position;
 
 
-
         //finds the end position of each platform
-        lastEndposition =
-            LastLevelPart.Find("LevelpartEnd").position;
 
         generatedPlatforms.Add(LastLevelPart);
+
+        Transform ChosenPowerUp;
+
+        if (digit >= 5)
+        {
+            ChosenPowerUp = ItemPrefab[0];
+        }
+        else
+        {
+            ChosenPowerUp = ItemPrefab[
+                Random.Range(1, ItemPrefab.Count)
+            ];
+        }
+
+        Transform spawnedItem = Instantiate(
+        ChosenPowerUp,
+        ItemSpawner,
+        Quaternion.identity,
+        Grid
+    );
+        generatedItems.Add(spawnedItem);
+
         //Calls the camera for the last part spawned
-        cameraController.OffScreenArrow(
-            LastLevelPart
-        );
+        cameraController.OffScreenArrow(LastLevelPart);
 
        // print(ItemSpawner);
-        if(digit >= 6)
-        {  
-            Instantiate( ItemPrefab[0],ItemSpawner,Quaternion.identity);
-        }
-        else if(digit<=5)
-        { 
-            Instantiate(ChosenPowerUp,ItemSpawner,Quaternion.identity);
-        }
+       
     }
 
     //Spawns the platforms on the grid
@@ -134,6 +142,8 @@ public class LevelGenerator : MonoBehaviour
     //Destroys the platfors created on game over
     public void OnGameOver()
     {
+
+
         foreach (Transform platform in generatedPlatforms)
         {
             if (platform != null)
@@ -141,8 +151,18 @@ public class LevelGenerator : MonoBehaviour
                 Destroy(platform.gameObject);
             }
         }
+        foreach (Transform item in generatedItems)
+        {
+            if (item != null)
+            {
+                
+                Destroy(item.gameObject);
+            }
+        }
 
         generatedPlatforms.Clear();
+        generatedItems.Clear();
+        
     }
     
     //Restarts the platform generation

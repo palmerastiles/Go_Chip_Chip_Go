@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
     public string Score;
 
     [Header("Transforms")]
-    private Vector3 InitialPosition;
+    public Vector3 InitialPosition;
     public RectTransform Arrow;
     private Transform nextPlatform;
 
